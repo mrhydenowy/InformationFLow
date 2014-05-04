@@ -1,0 +1,30 @@
+driver:
+com.mysql.jdbc.Driver
+firstAddressDataBase:
+jdbc:mysql://localhost/PKPCargoDMS?
+secondAddressDataBase:
+http://localhost:8080/PKPC_DMS_WS/rest
+user:
+root
+password:
+admin
+finalPath:
+d:/Test/
+departments:
+Dzia³ marketingu
+Dzia³ logistyki
+Dzia³ informatyków
+departmentsEnd
+departmentsmails:
+mrhydenowy@gmail.com
+nowickipawel.pl@gmail.com
+angelikadun@gmail.com
+departmentsmailsEnd
+host:
+smtp.gmail.com
+port:
+465
+userMail:
+testowePraktyki@gmail.com
+passwordMail:
+ewqewq123
