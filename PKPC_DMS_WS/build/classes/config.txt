@@ -1,0 +1,12 @@
+driver:
+com.mysql.jdbc.Driver
+firstAddressDataBase:
+jdbc:mysql://localhost/PKPCargoDMS?
+secondAddressDataBase:
+http://localhost:8080/PKPC_DMS_WS/rest
+user:
+root
+password:
+admin
+finalPath:
+d:/Test/

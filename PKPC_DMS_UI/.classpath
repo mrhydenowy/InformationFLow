@@ -23,9 +23,9 @@
 	<classpathentry kind="lib" path="library/commons-logging-adapters-1.1.1.jar"/>
 	<classpathentry kind="lib" path="library/commons-logging-api-1.1.1.jar"/>
 	<classpathentry kind="lib" path="library/commons-logging-tests.jar"/>
-	<classpathentry kind="lib" path="C:/Projekty/PKPC_DMS_UI/library/mail.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nowy/Documents/workspace InformationFlow with JavaSimon/PKPC_DMS_UI/library/mail.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/PKPC_DMS_WS"/>
-	<classpathentry kind="lib" path="C:/Program Files (x86)/springsource/sts-3.3.0.RELEASE/plugins/org.springframework.core_4.0.0.20130522-M1.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files (x86)/springsource/sts-3.3.0.RELEASE/plugins/org.springframework.web_4.0.0.20130522-M1.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/sts-bundle/sts-3.6.0.RELEASE/plugins/org.springframework.core_4.0.2.20140223-RELEASE.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/sts-bundle/sts-3.6.0.RELEASE/plugins/org.springframework.web_4.0.2.20140223-RELEASE.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

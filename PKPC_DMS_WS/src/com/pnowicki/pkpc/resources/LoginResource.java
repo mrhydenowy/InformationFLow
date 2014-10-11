@@ -1,12 +1,15 @@
 package com.pnowicki.pkpc.resources;
 
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -24,14 +27,19 @@ public class LoginResource
 	private Connection connect = null;
 	private Statement statement = null;
 	private ResultSet resultSet = null;
+	static String driverDataBase = new String();
+	static String firstAddressDataBase = new String();
+	static String userDataBase = new String();
+	static String passwordDataBase = new String();
+	static String finalPath = new String();
 	
 	@PUT
+	@Path("/login")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String tmpUsers(@FormDataParam("name") String name, @FormDataParam("password") String password, @FormDataParam("driverDataBase") String driverDataBase, 
-						   @FormDataParam("firstAddressDataBase") String firstAddressDataBase, @FormDataParam("userDataBase") String userDataBase,
-						   @FormDataParam("passwordDataBase") String passwordDataBase) throws Exception
+	public String tmpUsers(@FormDataParam("name") String name, @FormDataParam("password") String password) throws Exception
 	{
+		readFile();
 		String tmp = "";
 		try 
 		{
@@ -58,6 +66,14 @@ public class LoginResource
 		
 
 		return tmp;
+	}
+	
+	@GET
+	@Path("/getFinalPath")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getFinalPath() {
+		return finalPath;
 	}
 	
 	private String writeResultSet(ResultSet resultSet, String name, String password) throws SQLException 
@@ -101,4 +117,34 @@ public class LoginResource
     	  
 		}
     }
+	
+	private void readFile() {
+		try
+    	{
+    		FileReader fr = new FileReader("C://Users/Nowy/Documents/workspace InformationFlow with JavaSimon/PKPC_DMS_WS/config.txt");
+            BufferedReader br = new BufferedReader(fr);
+    		
+	        String tresc;
+	
+	        while((tresc = br.readLine()) != null)
+	        {
+	        	if(tresc.equals("driver:"))
+	        		driverDataBase = br.readLine();
+	        	else if(tresc.equals("firstAddressDataBase:"))
+	        		firstAddressDataBase = br.readLine();
+	        	else if(tresc.equals("user:"))
+	        		userDataBase = br.readLine();
+	        	else if(tresc.equals("password:"))
+	        		passwordDataBase = br.readLine();
+	        	else if(tresc.equals("finalPath:"))
+	        		finalPath = br.readLine();
+	        }
+	        fr.close();
+	        
+    	}
+    	catch(Exception exc)
+		{
+			exc.printStackTrace();
+		}
+	}
 }

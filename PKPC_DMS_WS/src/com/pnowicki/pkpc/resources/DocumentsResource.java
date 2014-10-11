@@ -19,7 +19,7 @@ import com.sun.jersey.multipart.FormDataParam;
 
 @Path("/documents")
 @XmlRootElement
-public class DocumentsResource 
+public class DocumentsResource
 {
 	private Connection connect = null;
 	private Statement statement = null;
@@ -30,17 +30,15 @@ public class DocumentsResource
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addDocument(@FormDataParam("name") String name, @FormDataParam("signature") String signature, @FormDataParam("filePath") String filePath, 
-								@FormDataParam("file") File file, @FormDataParam("endFile") String endFile, @FormDataParam("driverDataBase") String driverDataBase, 
-								@FormDataParam("firstAddressDataBase") String firstAddressDataBase, @FormDataParam("userDataBase") String userDataBase, 
-								@FormDataParam("passwordDataBase") String passwordDataBase, @FormDataParam("finalPath") String finalPath) throws Exception
+								@FormDataParam("file") File file, @FormDataParam("endFile") String endFile) throws Exception
 	{
 		try 
 		{
 			//Class.forName("com.mysql.jdbc.Driver");
-			Class.forName(driverDataBase);
+			Class.forName(LoginResource.driverDataBase);
 
 			//connect = DriverManager.getConnection("jdbc:mysql://localhost/PKPCargoDMS?" + "user=" + userDataBase + "&password=" + passwordDataBase);
-			connect = DriverManager.getConnection(firstAddressDataBase + "user=" + userDataBase + "&password=" + passwordDataBase);
+			connect = DriverManager.getConnection(LoginResource.firstAddressDataBase + "user=" + LoginResource.userDataBase + "&password=" + LoginResource.passwordDataBase);
 
 			preparedStatement = connect.prepareStatement("insert into  PKPCargoDMS.documents values (default, ?, ?, default, ?, ?, null)");
 		    preparedStatement.setString(1, name);
@@ -49,7 +47,7 @@ public class DocumentsResource
 		    preparedStatement.setBoolean(4, false);
 		    preparedStatement.executeUpdate();
 		      
-		    transferFiles(file, name + "+" + signature + "." + endFile, finalPath);
+		    transferFiles(file, name + "+" + signature + "." + endFile, LoginResource.finalPath);
 		} 
 		catch (Exception exc) 
 		{

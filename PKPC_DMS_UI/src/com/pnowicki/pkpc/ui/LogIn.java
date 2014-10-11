@@ -11,7 +11,6 @@ import javax.swing.*;
 import javax.ws.rs.core.MediaType;
 
 import com.sun.jersey.api.client.Client;
-
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -29,12 +28,7 @@ public class LogIn extends JFrame
     private JLabel passwordLabel = new JLabel("Has³o:");
     private JTextField userNameField = new JTextField();
     private JLabel userNameLabel = new JLabel("Nazwa u¿ytkownika:");
-    private String driverDataBase = new String();
-    private String firstAddressDataBase = new String();
     private String secondAddressDataBase = new String();
-    private String userDataBase = new String();
-    private String passwordDataBase = new String();
-    private String finalPath = new String();
     private String[] departments;
     private String[] mails;
     private String host;
@@ -141,22 +135,22 @@ public class LogIn extends JFrame
 				Client client = Client.create(config);
 				client = Client.create(config);
 				client.addFilter(new LoggingFilter());
-				WebResource webResource = client.resource(secondAddressDataBase).path("login");
+				WebResource webResource = client.resource(secondAddressDataBase).path("login").path("login");
 				
 				FormDataMultiPart fdmp = new FormDataMultiPart();
 				fdmp.bodyPart(new FormDataBodyPart("name", getName));
 				fdmp.bodyPart(new FormDataBodyPart("password", getPassword));
-				fdmp.bodyPart(new FormDataBodyPart("driverDataBase", driverDataBase));
-				fdmp.bodyPart(new FormDataBodyPart("firstAddressDataBase", firstAddressDataBase));
-				fdmp.bodyPart(new FormDataBodyPart("userDataBase", userDataBase));
-				fdmp.bodyPart(new FormDataBodyPart("passwordDataBase", passwordDataBase));
 				
 				String response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(String.class, fdmp);
-
+				
+				WebResource webResourcePath = client.resource(secondAddressDataBase).path("login").path("getFinalPath");
+				
+				String finalPath = webResourcePath.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(String.class);
+				
 				if(response.equals("user"))
-					new AddDocument(driverDataBase, firstAddressDataBase, secondAddressDataBase, userDataBase, passwordDataBase, finalPath).setVisible(true);
+					new AddDocument(secondAddressDataBase).setVisible(true);
 				else if(response.equals("admin"))
-					new ViewDocuments(driverDataBase, firstAddressDataBase, secondAddressDataBase, userDataBase, passwordDataBase, finalPath, departments, mails, host, port, userMail, passwordMail).setVisible(true);
+					new ViewDocuments(secondAddressDataBase, finalPath, departments, mails, host, port, userMail, passwordMail).setVisible(true);
 			}
     	});
     }
@@ -172,18 +166,8 @@ public class LogIn extends JFrame
 	
 	        while((tresc = br.readLine()) != null)
 	        {
-	        	if(tresc.equals("driver:"))
-	        		driverDataBase = br.readLine();
-	        	else if(tresc.equals("firstAddressDataBase:"))
-	        		firstAddressDataBase = br.readLine();
-	        	else if(tresc.equals("secondAddressDataBase:"))
+	        	if(tresc.equals("secondAddressDataBase:"))
 	        		secondAddressDataBase = br.readLine();
-	        	else if(tresc.equals("user:"))
-	        		userDataBase = br.readLine();
-	        	else if(tresc.equals("password:"))
-	        		passwordDataBase = br.readLine();
-	        	else if(tresc.equals("finalPath:"))
-	        		finalPath = br.readLine();
 	        }
 	        fr.close();
     	}
@@ -208,18 +192,8 @@ public class LogIn extends JFrame
 	
 	        while((tresc = br.readLine()) != null)
 	        {
-	        	if(tresc.equals("driver:"))
-	        		driverDataBase = br.readLine();
-	        	else if(tresc.equals("firstAddressDataBase:"))
-	        		firstAddressDataBase = br.readLine();
-	        	else if(tresc.equals("secondAddressDataBase:"))
+	        	if(tresc.equals("secondAddressDataBase:"))
 	        		secondAddressDataBase = br.readLine();
-	        	else if(tresc.equals("user:"))
-	        		userDataBase = br.readLine();
-	        	else if(tresc.equals("password:"))
-	        		passwordDataBase = br.readLine();
-	        	else if(tresc.equals("finalPath:"))
-	        		finalPath = br.readLine();
 	        	else if(tresc.equals("departments:"))
 	        	{
 	        		while(!(departmentsWhile = br.readLine()).equals("departmentsEnd"))

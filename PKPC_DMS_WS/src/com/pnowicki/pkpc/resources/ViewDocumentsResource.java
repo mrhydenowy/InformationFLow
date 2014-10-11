@@ -32,27 +32,6 @@ public class ViewDocumentsResource
 	static String arrayBooleans = new String();
 	static String arrayInts = new String();
 	
-	
-    static String staticDriverDataBase = new String();
-    static String staticFirstAddressDataBase = new String();
-    static String staticUserDataBase = new String();
-    static String staticPasswordDataBase = new String();
-	
-	@PUT
-	@Path("/addDocument")
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addDocument(@FormDataParam("driverDataBase") String driverDataBase, @FormDataParam("firstAddressDataBase") String firstAddressDataBase, 
-								@FormDataParam("userDataBase") String userDataBase, @FormDataParam("passwordDataBase") String passwordDataBase) throws Exception
-	{
-		staticDriverDataBase = driverDataBase;
-		staticFirstAddressDataBase = firstAddressDataBase;
-		staticUserDataBase = userDataBase;
-		staticPasswordDataBase = passwordDataBase;
-		
-		return Response.ok().build(); 
-	}
-	
 	@PUT
 	@Path("/openFile")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -73,10 +52,10 @@ public class ViewDocumentsResource
 		try 
 		{
 			//Class.forName("com.mysql.jdbc.Driver");
-			Class.forName(staticDriverDataBase);
+			Class.forName(LoginResource.driverDataBase);
 
 			//connect = DriverManager.getConnection("jdbc:mysql://localhost/PKPCargoDMS?" + "user=" + userDataBase + "&password=" + passwordDataBase);
-			connect = DriverManager.getConnection(staticFirstAddressDataBase + "user=" + staticUserDataBase + "&password=" + staticPasswordDataBase);
+			connect = DriverManager.getConnection(LoginResource.firstAddressDataBase + "user=" + LoginResource.userDataBase + "&password=" + LoginResource.passwordDataBase);
 			
 			statement = connect.createStatement();
 			resultSet = statement.executeQuery("select file_path, name, signature, considered, document_id from PKPCargoDMS.documents");

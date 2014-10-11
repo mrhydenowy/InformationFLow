@@ -2,10 +2,8 @@ package com.pnowicki.pkpc.ui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
@@ -24,7 +22,6 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
-import com.sun.jersey.multipart.file.FileDataBodyPart;
 
 public class ViewDocuments extends JFrame
 {
@@ -32,10 +29,6 @@ public class ViewDocuments extends JFrame
 	
 	private JComboBox<String> jComboBox1 = new JComboBox<String>();
 	
-    private String userDataBase = new String();
-    private String passwordDataBase = new String();
-    private String driverDataBase = new String();
-    private String firstAddressDataBase = new String();
     private String secondAddressDataBase = new String();
     private String finalPath = new String();
     private String[] departments;
@@ -47,20 +40,15 @@ public class ViewDocuments extends JFrame
 	
 	int[] intOstatni;
 	
-	public ViewDocuments(String driverDataBase, String firstAddressDataBase, String secondAddressDataBase, String userDataBase, String passwordDataBase, String finalPath, String[] departments,
-						 String[] mails, String host, String port, String userMail, String passwordMail)
+	public ViewDocuments(String secondAddressDataBase, String finalPath, String[] departments, String[] mails, String host, String port, String userMail, String passwordMail)
     {
-        super("Pisma");
+        super("Dokumenty");
         
         this.setBounds(300, 300, 600, 400);
         
         this.setDefaultCloseOperation(2);
         
-        this.driverDataBase = driverDataBase;
-        this.firstAddressDataBase = firstAddressDataBase;
         this.secondAddressDataBase = secondAddressDataBase;
-        this.userDataBase = userDataBase;
-        this.passwordDataBase = passwordDataBase;
         this.finalPath = finalPath;
         this.departments = departments;
         this.mails = mails;
@@ -105,18 +93,7 @@ public class ViewDocuments extends JFrame
 		client = Client.create(config);
 		client.addFilter(new LoggingFilter());
 		
-		WebResource webResource = client.resource(secondAddressDataBase).path("viewdocuments").path("addDocument");
-		FormDataMultiPart fdmp = new FormDataMultiPart();
-		fdmp.bodyPart(new FormDataBodyPart("driverDataBase", driverDataBase));
-		fdmp.bodyPart(new FormDataBodyPart("firstAddressDataBase", firstAddressDataBase));
-		fdmp.bodyPart(new FormDataBodyPart("userDataBase", userDataBase));
-		fdmp.bodyPart(new FormDataBodyPart("passwordDataBase", passwordDataBase));
-		
-		//ClientResponse response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(ClientResponse.class, fdmp);
-		webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(ClientResponse.class, fdmp);
-		
-		
-		webResource = client.resource(secondAddressDataBase).path("viewdocuments").path("getFiles");
+		WebResource webResource = client.resource(secondAddressDataBase).path("viewdocuments").path("getFiles");
 		
 		String response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(String.class);
 		
@@ -255,8 +232,7 @@ public class ViewDocuments extends JFrame
 					//ClientResponse response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(ClientResponse.class, fdmp);
 					webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(ClientResponse.class, fdmp);
 					
-					new CheckDocument(driverDataBase, firstAddressDataBase, secondAddressDataBase, userDataBase, passwordDataBase, path + endOfString, intOstatni[selectedIndex], departments, mails,
-							host, port, userMail, passwordMail).setVisible(true);
+					new CheckDocument(secondAddressDataBase, path + endOfString, intOstatni[selectedIndex], departments, mails, host, port, userMail, passwordMail).setVisible(true);
 				} 
         		catch (Exception exc) 
         		{

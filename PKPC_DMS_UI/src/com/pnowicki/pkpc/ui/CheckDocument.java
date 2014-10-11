@@ -46,10 +46,6 @@ public class CheckDocument  extends JFrame
     private String dir;
     private int index;
     
-    private String userDataBase = new String();
-    private String passwordDataBase = new String();
-    private String driverDataBase = new String();
-    private String firstAddressDataBase = new String();
     private String secondAddressDataBase = new String();
     private String[] departments;
     //private String[] mails;
@@ -59,8 +55,7 @@ public class CheckDocument  extends JFrame
     private String userMail;
     private String passwordMail;
 	
-	public CheckDocument(String driverDataBase, String firstAddressDataBase, String secondAddressDataBase, String userDataBase, String passwordDataBase, String file, int index, String[] departments,
-						 String[] mails, String host, String port, String userMail, String passwordMail)
+	public CheckDocument(String secondAddressDataBase, String file, int index, String[] departments, String[] mails, String host, String port, String userMail, String passwordMail)
 	{
 		this.setBounds(300, 300, 600, 400);
 	    
@@ -71,11 +66,7 @@ public class CheckDocument  extends JFrame
 	    this.departments = departments;
 	    this.departmentsEmails = mails;
 	    
-        this.driverDataBase = driverDataBase;
-        this.firstAddressDataBase = firstAddressDataBase;
         this.secondAddressDataBase = secondAddressDataBase;
-        this.userDataBase = userDataBase;
-        this.passwordDataBase = passwordDataBase;
 	    departmentsList = new JList<String>(departments);
 	    
         this.host = host;
@@ -205,10 +196,6 @@ public class CheckDocument  extends JFrame
 					fdmp.bodyPart(new FormDataBodyPart("file", dir));
 					fdmp.bodyPart(new FormDataBodyPart("index", "" + index));
 					fdmp.bodyPart(new FormDataBodyPart("bool", "" + bool));
-					fdmp.bodyPart(new FormDataBodyPart("driverDataBase", driverDataBase));
-					fdmp.bodyPart(new FormDataBodyPart("firstAddressDataBase", firstAddressDataBase));
-					fdmp.bodyPart(new FormDataBodyPart("userDataBase", userDataBase));
-					fdmp.bodyPart(new FormDataBodyPart("passwordDataBase", passwordDataBase));
 					fdmp.bodyPart(new FormDataBodyPart("host", host));
 					fdmp.bodyPart(new FormDataBodyPart("port", port));
 					fdmp.bodyPart(new FormDataBodyPart("userMail", userMail));

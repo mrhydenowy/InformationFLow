@@ -1,7 +1,6 @@
 package com.pnowicki.pkpc.resources;
 
 import javax.mail.*;
-
 import javax.mail.internet.*;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
@@ -12,6 +11,10 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.activation.FileDataSource;
 import javax.activation.DataHandler;
+
+
+
+
 
 
 import com.sun.jersey.multipart.FormDataParam;
@@ -59,18 +62,11 @@ public class SendMail
 	private PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
 	
-    private String driverDataBase = new String();
-    private String firstAddressDataBase = new String();
-    private String userDataBase = new String();
-    private String passwordDataBase = new String();
-
 	@PUT
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response sendMail(@FormDataParam("subject") String subject, @FormDataParam("content") String content, @FormDataParam("mails") String mails, @FormDataParam("file") String file, 
-							 @FormDataParam("index") String index, @FormDataParam("bool") String bool, @FormDataParam("driverDataBase") String driverDataBase, 
-							 @FormDataParam("firstAddressDataBase") String firstAddressDataBase, @FormDataParam("userDataBase") String userDataBase, 
-							 @FormDataParam("passwordDataBase") String passwordDataBase, @FormDataParam("host") String host, @FormDataParam("port") String port, 
+							 @FormDataParam("index") String index, @FormDataParam("bool") String bool, @FormDataParam("host") String host, @FormDataParam("port") String port, 
 							 @FormDataParam("userMail") String userMail, @FormDataParam("passwordMail") String passwordMail) 
 	{
 		//this.tablica = tablica;
@@ -105,10 +101,6 @@ public class SendMail
 		this.PATH_FILE = file;
 		this.index = Integer.parseInt(index);
 		this.bool = Boolean.parseBoolean(bool);
-		this.driverDataBase = driverDataBase;
-		this.firstAddressDataBase = firstAddressDataBase;
-		this.userDataBase = userDataBase;
-		this.passwordDataBase = passwordDataBase;
 		this.host = host;
 		this.port = Integer.parseInt(port);
 		this.from = userMail;
@@ -137,10 +129,10 @@ public class SendMail
 	    	try 
 			{
 	    		//Class.forName("com.mysql.jdbc.Driver");
-				Class.forName(driverDataBase);
+				Class.forName(LoginResource.driverDataBase);
 
 				//connect = DriverManager.getConnection("jdbc:mysql://localhost/PKPCargoDMS?" + "user=" + userDataBase + "&password=" + passwordDataBase);
-				connect = DriverManager.getConnection(firstAddressDataBase + "user=" + userDataBase + "&password=" + passwordDataBase);
+				connect = DriverManager.getConnection(LoginResource.firstAddressDataBase + "user=" + LoginResource.userDataBase + "&password=" + LoginResource.passwordDataBase);
 				
 				statement = connect.createStatement();
 	

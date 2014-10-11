@@ -1,0 +1,10 @@
+driver:
+com.mysql.jdbc.Driver
+firstAddressDataBase:
+jdbc:mysql://localhost/PKPCargoDMS?
+user:
+root
+password:
+admin
+finalPath:
+d:/Test/

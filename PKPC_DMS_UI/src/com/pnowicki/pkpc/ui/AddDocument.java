@@ -2,7 +2,9 @@ package com.pnowicki.pkpc.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 
 import javax.swing.*;
 import javax.ws.rs.core.MediaType;
@@ -32,14 +34,9 @@ public class AddDocument extends JFrame
     private JTextField signatureField = new JTextField();
     private JLabel signatureLabel = new JLabel("Sygnatura:");
     
-    private String userDataBase = new String();
-    private String passwordDataBase = new String();
-    private String driverDataBase = new String();
-    private String firstAddressDataBase = new String();
     private String secondAddressDataBase = new String();
-    private String finalPath = new String();
 	
-	public AddDocument(String driverDataBase, String firstAddressDataBase, String secondAddressDataBase, String userDataBase, String passwordDataBase, String finalPath) 
+	public AddDocument(String secondAddressDataBase) 
     {
         super("Dodawanie pism");
         
@@ -47,12 +44,7 @@ public class AddDocument extends JFrame
         
         this.setDefaultCloseOperation(2);
         
-        this.driverDataBase = driverDataBase;
-        this.firstAddressDataBase = firstAddressDataBase;
         this.secondAddressDataBase = secondAddressDataBase;
-        this.userDataBase = userDataBase;
-        this.passwordDataBase = passwordDataBase;
-        this.finalPath = finalPath;
 		
         initComponents();
     }
@@ -150,11 +142,6 @@ public class AddDocument extends JFrame
 				fdmp.bodyPart(new FormDataBodyPart("signature", getSignatureField));
 				fdmp.bodyPart(new FormDataBodyPart("filePath", filePath));
 				fdmp.bodyPart(new FormDataBodyPart("endFile", endFile));
-				fdmp.bodyPart(new FormDataBodyPart("driverDataBase", driverDataBase));
-				fdmp.bodyPart(new FormDataBodyPart("firstAddressDataBase", firstAddressDataBase));
-				fdmp.bodyPart(new FormDataBodyPart("userDataBase", userDataBase));
-				fdmp.bodyPart(new FormDataBodyPart("passwordDataBase", passwordDataBase));
-				fdmp.bodyPart(new FormDataBodyPart("finalPath", finalPath));
 
 				//ClientResponse response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(ClientResponse.class, fdmp);
 				webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(ClientResponse.class, fdmp);
