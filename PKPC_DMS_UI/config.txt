@@ -1,4 +1,4 @@
-secondAddressDataBase:
+addressToLogicLayer:
 http://localhost:8080/PKPC_DMS_WS/rest
 departments:
 Dzia³ marketingu

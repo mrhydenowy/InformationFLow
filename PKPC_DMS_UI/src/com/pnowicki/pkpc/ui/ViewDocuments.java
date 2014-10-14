@@ -29,7 +29,7 @@ public class ViewDocuments extends JFrame
 	
 	private JComboBox<String> jComboBox1 = new JComboBox<String>();
 	
-    private String secondAddressDataBase = new String();
+    private String addressToLogicLayer = new String();
     private String finalPath = new String();
     private String[] departments;
     private String[] mails;
@@ -40,7 +40,7 @@ public class ViewDocuments extends JFrame
 	
 	int[] intOstatni;
 	
-	public ViewDocuments(String secondAddressDataBase, String finalPath, String[] departments, String[] mails, String host, String port, String userMail, String passwordMail)
+	public ViewDocuments(String addressToLogicLayer, String finalPath, String[] departments, String[] mails, String host, String port, String userMail, String passwordMail)
     {
         super("Dokumenty");
         
@@ -48,7 +48,7 @@ public class ViewDocuments extends JFrame
         
         this.setDefaultCloseOperation(2);
         
-        this.secondAddressDataBase = secondAddressDataBase;
+        this.addressToLogicLayer = addressToLogicLayer;
         this.finalPath = finalPath;
         this.departments = departments;
         this.mails = mails;
@@ -93,7 +93,7 @@ public class ViewDocuments extends JFrame
 		client = Client.create(config);
 		client.addFilter(new LoggingFilter());
 		
-		WebResource webResource = client.resource(secondAddressDataBase).path("viewdocuments").path("getFiles");
+		WebResource webResource = client.resource(addressToLogicLayer).path("viewdocuments").path("getFiles");
 		
 		String response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(String.class);
 		
@@ -121,7 +121,7 @@ public class ViewDocuments extends JFrame
 				tmpTest++;
 		}
 		
-		webResource = client.resource(secondAddressDataBase).path("viewdocuments").path("getBooleans");
+		webResource = client.resource(addressToLogicLayer).path("viewdocuments").path("getBooleans");
 		response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(String.class);
 		
 		counter = 1;
@@ -147,7 +147,7 @@ public class ViewDocuments extends JFrame
 				tmpTest++;
 		}
 		
-		webResource = client.resource(secondAddressDataBase).path("viewdocuments").path("getInts");
+		webResource = client.resource(addressToLogicLayer).path("viewdocuments").path("getInts");
 		response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(String.class);
 		
 		counter = 1;
@@ -225,14 +225,14 @@ public class ViewDocuments extends JFrame
 					client = Client.create(config);
 					client.addFilter(new LoggingFilter());
 					
-					WebResource webResource = client.resource(secondAddressDataBase).path("viewdocuments").path("openFile");
+					WebResource webResource = client.resource(addressToLogicLayer).path("viewdocuments").path("openFile");
 					FormDataMultiPart fdmp = new FormDataMultiPart();
 					fdmp.bodyPart(new FormDataBodyPart("path", path + endOfString));
 					
 					//ClientResponse response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(ClientResponse.class, fdmp);
 					webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(ClientResponse.class, fdmp);
 					
-					new CheckDocument(secondAddressDataBase, path + endOfString, intOstatni[selectedIndex], departments, mails, host, port, userMail, passwordMail).setVisible(true);
+					new CheckDocument(addressToLogicLayer, path + endOfString, intOstatni[selectedIndex], departments, mails, host, port, userMail, passwordMail).setVisible(true);
 				} 
         		catch (Exception exc) 
         		{

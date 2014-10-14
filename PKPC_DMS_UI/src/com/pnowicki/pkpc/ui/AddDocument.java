@@ -34,7 +34,7 @@ public class AddDocument extends JFrame
     private JTextField signatureField = new JTextField();
     private JLabel signatureLabel = new JLabel("Sygnatura:");
     
-    private String secondAddressDataBase = new String();
+    private String addressToLogicLayer = new String();
 	
 	public AddDocument(String secondAddressDataBase) 
     {
@@ -44,7 +44,7 @@ public class AddDocument extends JFrame
         
         this.setDefaultCloseOperation(2);
         
-        this.secondAddressDataBase = secondAddressDataBase;
+        this.addressToLogicLayer = secondAddressDataBase;
 		
         initComponents();
     }
@@ -133,7 +133,7 @@ public class AddDocument extends JFrame
 				Client client = Client.create(config);
 				client = Client.create(config);
 				client.addFilter(new LoggingFilter());
-				WebResource webResource = client.resource(secondAddressDataBase).path("documents");
+				WebResource webResource = client.resource(addressToLogicLayer).path("documents");
 				FormDataMultiPart fdmp = new FormDataMultiPart();
 				File fileTmp = new File(filePath);
 				System.out.println(file.getName());
