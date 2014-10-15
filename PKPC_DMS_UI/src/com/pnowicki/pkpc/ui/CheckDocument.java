@@ -46,7 +46,7 @@ public class CheckDocument  extends JFrame
     private String dir;
     private int index;
     
-    private String secondAddressDataBase = new String();
+    private String addressToLogicLayer = new String();
     private String[] departments;
     //private String[] mails;
     
@@ -55,7 +55,7 @@ public class CheckDocument  extends JFrame
     private String userMail;
     private String passwordMail;
 	
-	public CheckDocument(String secondAddressDataBase, String file, int index, String[] departments, String[] mails, String host, String port, String userMail, String passwordMail)
+	public CheckDocument(String addressToLogicLayer, String file, int index, String[] departments, String[] mails, String host, String port, String userMail, String passwordMail)
 	{
 		this.setBounds(300, 300, 600, 400);
 	    
@@ -66,7 +66,7 @@ public class CheckDocument  extends JFrame
 	    this.departments = departments;
 	    this.departmentsEmails = mails;
 	    
-        this.secondAddressDataBase = secondAddressDataBase;
+        this.addressToLogicLayer = addressToLogicLayer;
 	    departmentsList = new JList<String>(departments);
 	    
         this.host = host;
@@ -188,7 +188,7 @@ public class CheckDocument  extends JFrame
 					Client client = Client.create(config);
 					client = Client.create(config);
 					client.addFilter(new LoggingFilter());
-					WebResource webResource = client.resource(secondAddressDataBase).path("sendmail");
+					WebResource webResource = client.resource(addressToLogicLayer).path("sendmail");
 					FormDataMultiPart fdmp = new FormDataMultiPart();
 					fdmp.bodyPart(new FormDataBodyPart("subject", subjectTextField.getText()));
 					fdmp.bodyPart(new FormDataBodyPart("content", contentTextArea.getText()));

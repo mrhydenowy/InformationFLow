@@ -28,7 +28,7 @@ public class LogIn extends JFrame
     private JLabel passwordLabel = new JLabel("Has³o:");
     private JTextField userNameField = new JTextField();
     private JLabel userNameLabel = new JLabel("Nazwa u¿ytkownika:");
-    private String secondAddressDataBase = new String();
+    private String addressToLogicLayer = new String();
     private String[] departments;
     private String[] mails;
     private String host;
@@ -135,7 +135,7 @@ public class LogIn extends JFrame
 				Client client = Client.create(config);
 				client = Client.create(config);
 				client.addFilter(new LoggingFilter());
-				WebResource webResource = client.resource(secondAddressDataBase).path("login").path("login");
+				WebResource webResource = client.resource(addressToLogicLayer).path("login").path("login");
 				
 				FormDataMultiPart fdmp = new FormDataMultiPart();
 				fdmp.bodyPart(new FormDataBodyPart("name", getName));
@@ -143,14 +143,14 @@ public class LogIn extends JFrame
 				
 				String response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(String.class, fdmp);
 				
-				WebResource webResourcePath = client.resource(secondAddressDataBase).path("login").path("getFinalPath");
+				WebResource webResourcePath = client.resource(addressToLogicLayer).path("login").path("getFinalPath");
 				
 				String finalPath = webResourcePath.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(String.class);
 				
 				if(response.equals("user"))
-					new AddDocument(secondAddressDataBase).setVisible(true);
+					new AddDocument(addressToLogicLayer).setVisible(true);
 				else if(response.equals("admin"))
-					new ViewDocuments(secondAddressDataBase, finalPath, departments, mails, host, port, userMail, passwordMail).setVisible(true);
+					new ViewDocuments(addressToLogicLayer, finalPath, departments, mails, host, port, userMail, passwordMail).setVisible(true);
 			}
     	});
     }
@@ -166,8 +166,8 @@ public class LogIn extends JFrame
 	
 	        while((tresc = br.readLine()) != null)
 	        {
-	        	if(tresc.equals("secondAddressDataBase:"))
-	        		secondAddressDataBase = br.readLine();
+	        	if(tresc.equals("addressToLogicLayer:"))
+	        		addressToLogicLayer = br.readLine();
 	        }
 	        fr.close();
     	}
@@ -192,8 +192,8 @@ public class LogIn extends JFrame
 	
 	        while((tresc = br.readLine()) != null)
 	        {
-	        	if(tresc.equals("secondAddressDataBase:"))
-	        		secondAddressDataBase = br.readLine();
+	        	if(tresc.equals("addressToLogicLayer:"))
+	        		addressToLogicLayer = br.readLine();
 	        	else if(tresc.equals("departments:"))
 	        	{
 	        		while(!(departmentsWhile = br.readLine()).equals("departmentsEnd"))
