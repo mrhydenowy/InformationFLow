@@ -23,292 +23,280 @@ import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
 
-public class ViewDocuments extends JFrame
-{
+public class ViewDocuments extends JFrame {
 	private static final long serialVersionUID = 1L;
-	
+
 	private JComboBox<String> jComboBox1 = new JComboBox<String>();
-	
-    private String addressToLogicLayer = new String();
-    private String finalPath = new String();
-    private String[] departments;
-    private String[] mails;
-    private String host;
-    private String port;
-    private String userMail;
-    private String passwordMail;
-	
-	int[] intOstatni;
-	
-	public ViewDocuments(String addressToLogicLayer, String finalPath, String[] departments, String[] mails, String host, String port, String userMail, String passwordMail)
-    {
-        super("Dokumenty");
-        
-        this.setBounds(300, 300, 600, 400);
-        
-        this.setDefaultCloseOperation(2);
-        
-        this.addressToLogicLayer = addressToLogicLayer;
-        this.finalPath = finalPath;
-        this.departments = departments;
-        this.mails = mails;
-        this.host = host;
-        this.port = port;
-        this.userMail = userMail;
-        this.passwordMail = passwordMail;
-		
-        initComponents();
-    }
-	
-	private void initComponents() 
-	{
-        GroupLayout layout = new GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jComboBox1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(465, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jComboBox1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(329, Short.MAX_VALUE))
-        );
-        
-        pack();
-        
-        getNamesDocuments();
-        
-        addDocumentButtonListener();
-    }
-	
-	private void getNamesDocuments()
-	{
+
+	private String addressToLogicLayer = new String();
+	private String finalPath = new String();
+	private String[] departments;
+	private String[] mails;
+	private String host;
+	private String port;
+	private String userMail;
+	private String mailPassword;
+
+	int[] theLastInt;
+
+	public ViewDocuments(String addressToLogicLayer, String finalPath,
+			String[] departments, String[] mails, String host, String port,
+			String userMail, String mailPassword) {
+		super("Dokumenty");
+
+		this.setBounds(300, 300, 600, 400);
+
+		this.setDefaultCloseOperation(2);
+
+		this.addressToLogicLayer = addressToLogicLayer;
+		this.finalPath = finalPath;
+		this.departments = departments;
+		this.mails = mails;
+		this.host = host;
+		this.port = port;
+		this.userMail = userMail;
+		this.mailPassword = mailPassword;
+
+		initComponents();
+	}
+
+	private void initComponents() {
+		GroupLayout layout = new GroupLayout(getContentPane());
+		getContentPane().setLayout(layout);
+		layout.setHorizontalGroup(layout.createParallelGroup(
+				GroupLayout.Alignment.LEADING).addGroup(
+				layout.createSequentialGroup()
+						.addContainerGap()
+						.addComponent(jComboBox1, GroupLayout.PREFERRED_SIZE,
+								GroupLayout.DEFAULT_SIZE,
+								GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(465, Short.MAX_VALUE)));
+		layout.setVerticalGroup(layout.createParallelGroup(
+				GroupLayout.Alignment.LEADING).addGroup(
+				layout.createSequentialGroup()
+						.addContainerGap()
+						.addComponent(jComboBox1, GroupLayout.PREFERRED_SIZE,
+								GroupLayout.DEFAULT_SIZE,
+								GroupLayout.PREFERRED_SIZE)
+						.addContainerGap(329, Short.MAX_VALUE)));
+
+		pack();
+
+		getNamesDocuments();
+
+		addDocumentButtonListener();
+	}
+
+	private void getNamesDocuments() {
 		ClientConfig config = new DefaultClientConfig();
 		Client client = Client.create(config);
 		client = Client.create(config);
 		client.addFilter(new LoggingFilter());
-		
-		WebResource webResource = client.resource(addressToLogicLayer).path("viewdocuments").path("getFiles");
-		
-		String response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(String.class);
-		
-		//System.out.println(response);
+
+		WebResource webResource = client.resource(addressToLogicLayer)
+				.path("viewdocuments").path("getFiles");
+
+		String response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE)
+				.get(String.class);
+
+		// System.out.println(response);
 		int counter = 1;
-		
-		for(int i = 0; i < response.length(); i++)
-		{
-			if(response.charAt(i) == ',')
+
+		for (int i = 0; i < response.length(); i++) {
+			if (response.charAt(i) == ',')
 				counter++;
 		}
-		
+
 		String[] arrayStrings = new String[counter];
-		
-		for(int i = 0; i < arrayStrings.length; i++)
+
+		for (int i = 0; i < arrayStrings.length; i++)
 			arrayStrings[i] = "";
-		
+
 		int tmpTest = 0;
-		
-		for(int i = 0; i < response.length(); i++)
-		{
-			if(response.charAt(i) != ',')
+
+		for (int i = 0; i < response.length(); i++) {
+			if (response.charAt(i) != ',')
 				arrayStrings[tmpTest] += response.charAt(i);
-			else if(response.charAt(i) == ',')
+			else if (response.charAt(i) == ',')
 				tmpTest++;
 		}
-		
-		webResource = client.resource(addressToLogicLayer).path("viewdocuments").path("getBooleans");
-		response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(String.class);
-		
+
+		webResource = client.resource(addressToLogicLayer)
+				.path("viewdocuments").path("getBooleans");
+		response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(
+				String.class);
+
 		counter = 1;
-		
-		for(int i = 0; i < response.length(); i++)
-		{
-			if(response.charAt(i) == ',')
+
+		for (int i = 0; i < response.length(); i++) {
+			if (response.charAt(i) == ',')
 				counter++;
 		}
-		
+
 		String[] arrayBooleans = new String[counter];
-		
-		for(int i = 0; i < arrayBooleans.length; i++)
+
+		for (int i = 0; i < arrayBooleans.length; i++)
 			arrayBooleans[i] = "";
-		
+
 		tmpTest = 0;
-		
-		for(int i = 0; i < response.length(); i++)
-		{
-			if(response.charAt(i) != ',')
+
+		for (int i = 0; i < response.length(); i++) {
+			if (response.charAt(i) != ',')
 				arrayBooleans[tmpTest] += response.charAt(i);
-			else if(response.charAt(i) == ',')
+			else if (response.charAt(i) == ',')
 				tmpTest++;
 		}
-		
-		webResource = client.resource(addressToLogicLayer).path("viewdocuments").path("getInts");
-		response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(String.class);
-		
+
+		webResource = client.resource(addressToLogicLayer)
+				.path("viewdocuments").path("getInts");
+		response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(
+				String.class);
+
 		counter = 1;
-		
-		for(int i = 0; i < response.length(); i++)
-		{
-			if(response.charAt(i) == ',')
+
+		for (int i = 0; i < response.length(); i++) {
+			if (response.charAt(i) == ',')
 				counter++;
 		}
-		
+
 		String[] arrayInts = new String[counter];
-		
-		for(int i = 0; i < arrayInts.length; i++)
+
+		for (int i = 0; i < arrayInts.length; i++)
 			arrayInts[i] = "";
-		
+
 		tmpTest = 0;
-		
-		for(int i = 0; i < response.length(); i++)
-		{
-			if(response.charAt(i) != ',')
+
+		for (int i = 0; i < response.length(); i++) {
+			if (response.charAt(i) != ',')
 				arrayInts[tmpTest] += response.charAt(i);
-			else if(response.charAt(i) == ',')
+			else if (response.charAt(i) == ',')
 				tmpTest++;
 		}
-		
-		intOstatni = new int[arrayInts.length];
-		
-		for(int i = 0; i < arrayInts.length; i++)
-		{
-			intOstatni[i] = Integer.parseInt(arrayInts[i]);
+
+		theLastInt = new int[arrayInts.length];
+
+		for (int i = 0; i < arrayInts.length; i++) {
+			theLastInt[i] = Integer.parseInt(arrayInts[i]);
 		}
-		
-		for(int i = 0; i < arrayStrings.length; i++)
-		{
+
+		for (int i = 0; i < arrayStrings.length; i++) {
 			jComboBox1.addItem(arrayStrings[i]);
 		}
 
-			ComboBoxRenderer renderer = new ComboBoxRenderer(jComboBox1);
+		ComboBoxRenderer renderer = new ComboBoxRenderer(jComboBox1);
 
-	        renderer.setStrings(arrayStrings);
-	        renderer.setBoolean(arrayBooleans);
+		renderer.setStrings(arrayStrings);
+		renderer.setBoolean(arrayBooleans);
 
-	        jComboBox1.setRenderer(renderer);
+		jComboBox1.setRenderer(renderer);
 	}
-	
-	private void addDocumentButtonListener()
-    {
-		jComboBox1.addActionListener(new ActionListener() 
-		{
+
+	private void addDocumentButtonListener() {
+		jComboBox1.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) 
-			{
+			public void actionPerformed(ActionEvent e) {
 				String path = new String(finalPath);
-				try 
-        		{
-					String stringSelectedIndex = jComboBox1.getSelectedItem().toString();
-					
+				try {
+					String stringSelectedIndex = jComboBox1.getSelectedItem()
+							.toString();
+
 					int selectedIndex = jComboBox1.getSelectedIndex();
 
 					String endOfString = new String("");
-					
+
 					String s = System.getProperty("file.separator");
 					char firstLetter = s.charAt(0);
-					
-					for(int i = 0; i < stringSelectedIndex.length(); i++)
-					{
-						if(stringSelectedIndex.charAt(i) == firstLetter)
+
+					for (int i = 0; i < stringSelectedIndex.length(); i++) {
+						if (stringSelectedIndex.charAt(i) == firstLetter)
 							endOfString = "";
-						else if(stringSelectedIndex.charAt(i) != firstLetter)
+						else if (stringSelectedIndex.charAt(i) != firstLetter)
 							endOfString += stringSelectedIndex.charAt(i);
 					}
-					
+
 					ClientConfig config = new DefaultClientConfig();
 					Client client = Client.create(config);
 					client = Client.create(config);
 					client.addFilter(new LoggingFilter());
-					
-					WebResource webResource = client.resource(addressToLogicLayer).path("viewdocuments").path("openFile");
+
+					WebResource webResource = client
+							.resource(addressToLogicLayer)
+							.path("viewdocuments").path("openFile");
 					FormDataMultiPart fdmp = new FormDataMultiPart();
-					fdmp.bodyPart(new FormDataBodyPart("path", path + endOfString));
-					
-					//ClientResponse response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(ClientResponse.class, fdmp);
-					webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(ClientResponse.class, fdmp);
-					
-					new CheckDocument(addressToLogicLayer, path + endOfString, intOstatni[selectedIndex], departments, mails, host, port, userMail, passwordMail).setVisible(true);
-				} 
-        		catch (Exception exc) 
-        		{
-        			exc.printStackTrace();
+					fdmp.bodyPart(new FormDataBodyPart("path", path
+							+ endOfString));
+
+					// ClientResponse response =
+					// webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(ClientResponse.class,
+					// fdmp);
+					webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(
+							ClientResponse.class, fdmp);
+
+					new CheckDocument(addressToLogicLayer, path + endOfString,
+							theLastInt[selectedIndex], departments, mails,
+							host, port, userMail, mailPassword)
+							.setVisible(true);
+				} catch (Exception exc) {
+					exc.printStackTrace();
 				}
 			}
 		});
-    }
+	}
 }
 
-class ComboBoxRenderer extends JPanel implements ListCellRenderer
-{
-    private static final long serialVersionUID = -1L;
-    private String[] strings;
-    private String[] bools;
+class ComboBoxRenderer extends JPanel implements ListCellRenderer {
+	private static final long serialVersionUID = -1L;
+	private String[] strings;
+	private String[] bools;
 
-    JPanel textPanel;
-    JLabel text;
+	JPanel textPanel;
+	JLabel text;
 
-    public ComboBoxRenderer(JComboBox combo) 
-    {
-        textPanel = new JPanel();
-        textPanel.add(this);
-        text = new JLabel();
-        text.setOpaque(true);
-        text.setFont(combo.getFont());
-        textPanel.add(text);
-    }
+	public ComboBoxRenderer(JComboBox combo) {
+		textPanel = new JPanel();
+		textPanel.add(this);
+		text = new JLabel();
+		text.setOpaque(true);
+		text.setFont(combo.getFont());
+		textPanel.add(text);
+	}
 
+	public void setStrings(String[] str) {
+		strings = str;
+	}
 
-    public void setStrings(String[] str)
-    {
-        strings = str;
-    }
-    
-    public void setBoolean(String[] bool)
-    {
-        bools = bool;
-    }
+	public void setBoolean(String[] bool) {
+		bools = bool;
+	}
 
-    public String[] getStrings()
-    {
-        return strings;
-    }
-    
-    public String[] getBooleans()
-    {
-        return bools;
-    }
+	public String[] getStrings() {
+		return strings;
+	}
 
-    @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) 
-    {
-        if (isSelected)
-        {
-            setBackground(list.getSelectionBackground());
-        }
-        else
-        {
-            setBackground(Color.WHITE);
-        }
+	public String[] getBooleans() {
+		return bools;
+	}
 
-        text.setBackground(getBackground());
+	@Override
+	public Component getListCellRendererComponent(JList list, Object value,
+			int index, boolean isSelected, boolean cellHasFocus) {
+		if (isSelected) {
+			setBackground(list.getSelectionBackground());
+		} else {
+			setBackground(Color.WHITE);
+		}
 
-        text.setText(value.toString());
-        if(index > -1)
-        {
-	        if (bools[index].equals("false"))
-	        {
-	            text.setForeground(Color.RED);
-	        }
-	        if (bools[index].equals("true"))
-	        {
-	            text.setForeground(Color.GREEN);
-	        }
-        }
-        return text;
-    }
+		text.setBackground(getBackground());
+
+		text.setText(value.toString());
+		if (index > -1) {
+			if (bools[index].equals("false")) {
+				text.setForeground(Color.RED);
+			}
+			if (bools[index].equals("true")) {
+				text.setForeground(Color.GREEN);
+			}
+		}
+		return text;
+	}
 }

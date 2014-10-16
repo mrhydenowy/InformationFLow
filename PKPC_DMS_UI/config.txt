@@ -14,5 +14,5 @@ port:
 465
 userMail:
 testowePraktyki@gmail.com
-passwordMail:
+mailPassword:
 ewqewq123

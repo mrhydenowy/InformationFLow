@@ -1,6 +1,5 @@
 package com.pnowicki.pkpc.resources;
 
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.sql.Connection;
@@ -19,11 +18,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.sun.jersey.multipart.FormDataParam;
 
-
 @Path("/login")
 @XmlRootElement
-public class LoginResource 
-{
+public class LoginResource {
 	private Connection connect = null;
 	private Statement statement = null;
 	private ResultSet resultSet = null;
@@ -32,42 +29,41 @@ public class LoginResource
 	static String userDataBase = new String();
 	static String passwordDataBase = new String();
 	static String finalPath = new String();
-	
+
 	@PUT
 	@Path("/login")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String tmpUsers(@FormDataParam("name") String name, @FormDataParam("password") String password) throws Exception
-	{
+	public String tmpUsers(@FormDataParam("userName") String userName,
+			@FormDataParam("userPassword") String userPassword)
+			throws Exception {
 		readFile();
 		String tmp = "";
-		try 
-		{
-			//Class.forName("com.mysql.jdbc.Driver");
+		try {
+			// Class.forName("com.mysql.jdbc.Driver");
 			Class.forName(driverDataBase);
 
-			//connect = DriverManager.getConnection("jdbc:mysql://localhost/PKPCargoDMS?" + "user=" + userDataBase + "&password=" + passwordDataBase);
-			connect = DriverManager.getConnection(firstAddressDataBase + "user=" + userDataBase + "&password=" + passwordDataBase);
-			
+			// connect =
+			// DriverManager.getConnection("jdbc:mysql://localhost/PKPCargoDMS?"
+			// + "user=" + userDataBase + "&password=" + passwordDataBase);
+			connect = DriverManager.getConnection(firstAddressDataBase
+					+ "user=" + userDataBase + "&password=" + passwordDataBase);
+
 			// Statements allow to issue SQL queries to the database
 			statement = connect.createStatement();
 			// Result set get the result of the SQL query
-			resultSet = statement.executeQuery("select * from pkpcargodms.users");
-			tmp = writeResultSet(resultSet, name, password);
-		} 
-		catch (Exception exc) 
-		{
+			resultSet = statement
+					.executeQuery("select * from pkpcargodms.users");
+			tmp = writeResultSet(resultSet, userName, userPassword);
+		} catch (Exception exc) {
 			exc.printStackTrace();
+		} finally {
+			close();
 		}
-		finally 
-	    {
-	    	close();
-	    }
-		
 
 		return tmp;
 	}
-	
+
 	@GET
 	@Path("/getFinalPath")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -75,75 +71,64 @@ public class LoginResource
 	public String getFinalPath() {
 		return finalPath;
 	}
-	
-	private String writeResultSet(ResultSet resultSet, String name, String password) throws SQLException 
-    {
+
+	private String writeResultSet(ResultSet resultSet, String userName,
+			String userPassword) throws SQLException {
 		String tmp = "";
 
-      while (resultSet.next()) 
-      {
-        String nameUser = resultSet.getString("name");
-        String passwordUser = resultSet.getString("password");
-        String roleUser = resultSet.getString("role");
-        
-        if(nameUser.equals(name) && passwordUser.equals(password))
-        {
-        	tmp = roleUser;
-        	break;
-        }
-        else
-        {
-        	tmp = "";
-        }
-      }
-      return tmp;
-    }
-	
-	private void close() 
-    {
-		try 
-		{
-			if(resultSet != null) 
+		while (resultSet.next()) {
+			String nameUser = resultSet.getString("name");
+			String passwordUser = resultSet.getString("password");
+			String roleUser = resultSet.getString("role");
+
+			if (nameUser.equals(userName) && passwordUser.equals(userPassword)) {
+				tmp = roleUser;
+				break;
+			} else {
+				tmp = "";
+			}
+		}
+		return tmp;
+	}
+
+	private void close() {
+		try {
+			if (resultSet != null)
 				resultSet.close();
 
-			if(statement != null) 
+			if (statement != null)
 				statement.close();
 
-			if(connect != null) 
+			if (connect != null)
 				connect.close();
-		} 
-		catch(Exception e) 
-		{
-    	  
+		} catch (Exception e) {
+
 		}
-    }
-	
+	}
+
 	private void readFile() {
-		try
-    	{
-    		FileReader fr = new FileReader("C://Users/Nowy/Documents/workspace InformationFlow with JavaSimon/PKPC_DMS_WS/config.txt");
-            BufferedReader br = new BufferedReader(fr);
-    		
-	        String tresc;
-	
-	        while((tresc = br.readLine()) != null)
-	        {
-	        	if(tresc.equals("driver:"))
-	        		driverDataBase = br.readLine();
-	        	else if(tresc.equals("firstAddressDataBase:"))
-	        		firstAddressDataBase = br.readLine();
-	        	else if(tresc.equals("user:"))
-	        		userDataBase = br.readLine();
-	        	else if(tresc.equals("password:"))
-	        		passwordDataBase = br.readLine();
-	        	else if(tresc.equals("finalPath:"))
-	        		finalPath = br.readLine();
-	        }
-	        fr.close();
-	        
-    	}
-    	catch(Exception exc)
-		{
+		try {
+			FileReader fileReader = new FileReader(
+					"C://Users/Nowy/Documents/workspace InformationFlow with JavaSimon/PKPC_DMS_WS/config.txt");
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+			String content;
+
+			while ((content = bufferedReader.readLine()) != null) {
+				if (content.equals("driver:"))
+					driverDataBase = bufferedReader.readLine();
+				else if (content.equals("firstAddressDataBase:"))
+					firstAddressDataBase = bufferedReader.readLine();
+				else if (content.equals("user:"))
+					userDataBase = bufferedReader.readLine();
+				else if (content.equals("password:"))
+					passwordDataBase = bufferedReader.readLine();
+				else if (content.equals("finalPath:"))
+					finalPath = bufferedReader.readLine();
+			}
+			fileReader.close();
+
+		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
 	}
