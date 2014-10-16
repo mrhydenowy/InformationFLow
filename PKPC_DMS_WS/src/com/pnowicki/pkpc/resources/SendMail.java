@@ -12,11 +12,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.activation.FileDataSource;
 import javax.activation.DataHandler;
 
-
-
-
-
-
 import com.sun.jersey.multipart.FormDataParam;
 
 import java.sql.Connection;
@@ -26,190 +21,183 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Properties;
 
-
 @Path("/sendmail")
 @XmlRootElement
-public class SendMail 
-{
-    private String host;
-    private int port;
-    
-    // Adres email osby która wysy³a maila
-    private String from;
+public class SendMail {
+	private String host;
+	private int port;
 
-    // Has³o do konta osoby która wysy³a maila
-    private String password;
+	// Adres email osby która wysy³a maila
+	private String userMail;
 
-    // Adresy email osob do których wysy³amy mail
-    private String[] mails;
+	// Has³o do konta osoby która wysy³a maila
+	private String mailPassword;
 
-    // Temat wiadomoœci
-    private String subject = new String();
+	// Adresy email osob do których wysy³amy mail
+	private String[] mails;
 
-    // Treœæ wiadomoœci
-    private String content = new String();
-    
+	// Temat wiadomoœci
+	private String mailSubject = new String();
+
+	// Treœæ wiadomoœci
+	private String mailContent = new String();
+
 	// Œcie¿ka do pliku
 	private String PATH_FILE;
-	
-	private int index;
-	
-	private boolean bool;
-	
-	
-    private Connection connect = null;
+
+	private int fileIndex;
+
+	private boolean resultDocumentCheckBox;
+
+	private Connection connect = null;
 	private Statement statement = null;
 	private PreparedStatement preparedStatement = null;
 	private ResultSet resultSet = null;
-	
+
 	@PUT
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response sendMail(@FormDataParam("subject") String subject, @FormDataParam("content") String content, @FormDataParam("mails") String mails, @FormDataParam("file") String file, 
-							 @FormDataParam("index") String index, @FormDataParam("bool") String bool, @FormDataParam("host") String host, @FormDataParam("port") String port, 
-							 @FormDataParam("userMail") String userMail, @FormDataParam("passwordMail") String passwordMail) 
-	{
-		//this.tablica = tablica;
-		
+	public Response sendMail(
+			@FormDataParam("mailSubject") String mailSubject,
+			@FormDataParam("mailContent") String mailContent,
+			@FormDataParam("mailsString") String mailsString,
+			@FormDataParam("fileDir") String fileDir,
+			@FormDataParam("fileIndex") String fileIndex,
+			@FormDataParam("resultDocumentCheckBox") String resultDocumentCheckBox,
+			@FormDataParam("host") String host,
+			@FormDataParam("port") String port,
+			@FormDataParam("userMail") String userMail,
+			@FormDataParam("mailPassword") String mailPassword) {
+		// this.tablica = tablica;
+
 		int tmp = 0;
-		
-		for(int i = 0; i < mails.length(); i++)
-		{
-			if(mails.charAt(i) == ',')
+
+		for (int i = 0; i < mailsString.length(); i++) {
+			if (mailsString.charAt(i) == ',')
 				tmp++;
 		}
-		
+
 		this.mails = new String[tmp];
-		
-		for(int i = 0; i < this.mails.length; i++)
-		{
+
+		for (int i = 0; i < this.mails.length; i++) {
 			this.mails[i] = "";
 		}
-		
+
 		tmp = 0;
-		
-		for(int i = 0; i < mails.length(); i++)
-		{
-			if(mails.charAt(i) != ',')
-				this.mails[tmp] += mails.charAt(i);
-			else if(mails.charAt(i) == ',')
+
+		for (int i = 0; i < mailsString.length(); i++) {
+			if (mailsString.charAt(i) != ',')
+				this.mails[tmp] += mailsString.charAt(i);
+			else if (mailsString.charAt(i) == ',')
 				tmp++;
 		}
-		
-		this.subject = subject;
-		this.content = content;
-		this.PATH_FILE = file;
-		this.index = Integer.parseInt(index);
-		this.bool = Boolean.parseBoolean(bool);
+
+		this.mailSubject = mailSubject;
+		this.mailContent = mailContent;
+		this.PATH_FILE = fileDir;
+		this.fileIndex = Integer.parseInt(fileIndex);
+		this.resultDocumentCheckBox = Boolean
+				.parseBoolean(resultDocumentCheckBox);
 		this.host = host;
 		this.port = Integer.parseInt(port);
-		this.from = userMail;
-		this.password = passwordMail;
-		
-		//System.out.println(this.PATH_FILE);
-		
-		
-		try 
-        {
-        	send();
-       	} 
-        catch (MessagingException e) 
-        {
-        	e.printStackTrace();
-        }
-        
-		
-		return Response.ok().build(); 
+		this.userMail = userMail;
+		this.mailPassword = mailPassword;
+
+		// System.out.println(this.PATH_FILE);
+
+		try {
+			send();
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+
+		return Response.ok().build();
 	}
-	
-    void send() throws MessagingException 
-    {
-    	if(bool)
-    	{
-	    	try 
-			{
-	    		//Class.forName("com.mysql.jdbc.Driver");
+
+	void send() throws MessagingException {
+		if (resultDocumentCheckBox) {
+			try {
+				// Class.forName("com.mysql.jdbc.Driver");
 				Class.forName(LoginResource.driverDataBase);
 
-				//connect = DriverManager.getConnection("jdbc:mysql://localhost/PKPCargoDMS?" + "user=" + userDataBase + "&password=" + passwordDataBase);
-				connect = DriverManager.getConnection(LoginResource.firstAddressDataBase + "user=" + LoginResource.userDataBase + "&password=" + LoginResource.passwordDataBase);
-				
+				// connect =
+				// DriverManager.getConnection("jdbc:mysql://localhost/PKPCargoDMS?"
+				// + "user=" + userDataBase + "&password=" + passwordDataBase);
+				connect = DriverManager
+						.getConnection(LoginResource.firstAddressDataBase
+								+ "user=" + LoginResource.userDataBase
+								+ "&password=" + LoginResource.passwordDataBase);
+
 				statement = connect.createStatement();
-	
-				preparedStatement = connect.prepareStatement("UPDATE documents SET considered = '1', date_of_considered = CURRENT_TIMESTAMP WHERE document_id='" + index + "'");
-				
+
+				preparedStatement = connect
+						.prepareStatement("UPDATE documents SET considered = '1', date_of_considered = CURRENT_TIMESTAMP WHERE document_id='"
+								+ fileIndex + "'");
+
 				preparedStatement.executeUpdate();
-			} 
-			catch (Exception exc) 
-			{
+			} catch (Exception exc) {
 				exc.printStackTrace();
+			} finally {
+				close();
 			}
-			finally 
-		    {
-		    	close();
-		    }
-    	}
-    	
-    	Properties props = new Properties();
-    	
-    	props.put("mail.transport.protocol", "smtps");
-    	props.put("mail.smtps.auth", "true");
+		}
 
-    	// Pobranie sesji
-    	Session mailSession = Session.getDefaultInstance(props, null);
+		Properties props = new Properties();
 
-    	// Tworzenie wiadomoœci
-    	MimeMessage message = new MimeMessage(mailSession);
-    	message.setSubject(subject);
+		props.put("mail.transport.protocol", "smtps");
+		props.put("mail.smtps.auth", "true");
 
-    	// Stworzenie czêœci wiadomosci z treœci¹
-    	MimeBodyPart textPart = new MimeBodyPart();
-    	textPart.setContent(content, "text/html; charset=ISO-8859-2");
+		// Pobranie sesji
+		Session mailSession = Session.getDefaultInstance(props, null);
 
-    	// Stworzenie czêœci z za³acznikami
-    	MimeBodyPart attachFilePart = new MimeBodyPart();
-    	FileDataSource fds = new FileDataSource(PATH_FILE);
-    	attachFilePart.setDataHandler(new DataHandler(fds));
-    	attachFilePart.setFileName(fds.getName());
+		// Tworzenie wiadomoœci
+		MimeMessage message = new MimeMessage(mailSession);
+		message.setSubject(mailSubject);
 
-    	// Zestawienie obydwu czêœci maila w jedn¹ wieloczêœciow¹
-    	Multipart mp = new MimeMultipart();
-    	mp.addBodyPart(textPart);
-    	mp.addBodyPart(attachFilePart);
+		// Stworzenie czêœci wiadomosci z treœci¹
+		MimeBodyPart textPart = new MimeBodyPart();
+		textPart.setContent(mailContent, "text/html; charset=ISO-8859-2");
 
-    	// Dodanie treœci maila
-    	message.setContent(mp);
-    	
-    	for(int i = 0; i < mails.length; i++)
-    	{
-    		message.addRecipient(Message.RecipientType.TO, new InternetAddress(mails[i]));
-    	}
+		// Stworzenie czêœci z za³acznikami
+		MimeBodyPart attachFilePart = new MimeBodyPart();
+		FileDataSource fds = new FileDataSource(PATH_FILE);
+		attachFilePart.setDataHandler(new DataHandler(fds));
+		attachFilePart.setFileName(fds.getName());
 
-    	Transport transport = mailSession.getTransport();
-    	transport.connect(host, port, from, password);
+		// Zestawienie obydwu czêœci maila w jedn¹ wieloczêœciow¹
+		Multipart mp = new MimeMultipart();
+		mp.addBodyPart(textPart);
+		mp.addBodyPart(attachFilePart);
 
-    	// Wys¹³nei maila
-    	transport.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
-    	transport.close();
-    }
-    
-    
-    private void close() 
-    {
-		try 
-		{
-			if(resultSet != null) 
+		// Dodanie treœci maila
+		message.setContent(mp);
+
+		for (int i = 0; i < mails.length; i++) {
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(
+					mails[i]));
+		}
+
+		Transport transport = mailSession.getTransport();
+		transport.connect(host, port, userMail, mailPassword);
+
+		// Wys¹³nei maila
+		transport.sendMessage(message,
+				message.getRecipients(Message.RecipientType.TO));
+		transport.close();
+	}
+
+	private void close() {
+		try {
+			if (resultSet != null)
 				resultSet.close();
 
-			if(statement != null) 
+			if (statement != null)
 				statement.close();
 
-			if(connect != null) 
+			if (connect != null)
 				connect.close();
-		} 
-		catch(Exception e) 
-		{
-    	  
+		} catch (Exception e) {
+
 		}
-    }
+	}
 }

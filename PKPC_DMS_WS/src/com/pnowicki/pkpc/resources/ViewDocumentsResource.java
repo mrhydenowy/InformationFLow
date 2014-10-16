@@ -1,6 +1,5 @@
 package com.pnowicki.pkpc.resources;
 
-
 import java.awt.Desktop;
 import java.io.File;
 import java.sql.Connection;
@@ -19,11 +18,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.sun.jersey.multipart.FormDataParam;
 
-
 @Path("/viewdocuments")
 @XmlRootElement
-public class ViewDocumentsResource 
-{
+public class ViewDocumentsResource {
 	private Connection connect = null;
 	private Statement statement = null;
 	private ResultSet resultSet = null;
@@ -31,119 +28,109 @@ public class ViewDocumentsResource
 	static String arrayStrings = new String();
 	static String arrayBooleans = new String();
 	static String arrayInts = new String();
-	
+
 	@PUT
 	@Path("/openFile")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response openFile(@FormDataParam("path") String path) throws Exception
-	{
+	public Response openFile(@FormDataParam("path") String path)
+			throws Exception {
 		File dir = new File(path);
 		Desktop.getDesktop().open(dir);
-		return Response.ok().build(); 
+		return Response.ok().build();
 	}
-	
+
 	@GET
 	@Path("/getFiles")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getFiles()
-	{
-		try 
-		{
-			//Class.forName("com.mysql.jdbc.Driver");
+	public String getFiles() {
+		try {
+			// Class.forName("com.mysql.jdbc.Driver");
 			Class.forName(LoginResource.driverDataBase);
 
-			//connect = DriverManager.getConnection("jdbc:mysql://localhost/PKPCargoDMS?" + "user=" + userDataBase + "&password=" + passwordDataBase);
-			connect = DriverManager.getConnection(LoginResource.firstAddressDataBase + "user=" + LoginResource.userDataBase + "&password=" + LoginResource.passwordDataBase);
-			
+			// connect =
+			// DriverManager.getConnection("jdbc:mysql://localhost/PKPCargoDMS?"
+			// + "user=" + userDataBase + "&password=" + passwordDataBase);
+			connect = DriverManager
+					.getConnection(LoginResource.firstAddressDataBase + "user="
+							+ LoginResource.userDataBase + "&password="
+							+ LoginResource.passwordDataBase);
+
 			statement = connect.createStatement();
-			resultSet = statement.executeQuery("select file_path, name, signature, considered, document_id from PKPCargoDMS.documents");
-			
+			resultSet = statement
+					.executeQuery("select file_path, name, signature, considered, document_id from PKPCargoDMS.documents");
+
 			boolean temporary = false;
 
-			while (resultSet.next())
-			{
+			while (resultSet.next()) {
 				String file_path = resultSet.getString("file_path");
 				String name = resultSet.getString("name");
 				String signature = resultSet.getString("signature");
 				boolean tmp = resultSet.getBoolean("considered");
 				int tmpInt = resultSet.getInt("document_id");
-				
+
 				String endFile = new String("");
-				
-				//String s = System.getProperty("file.separator");
-				//char firstLetter = s.charAt(0);
-				
-				for(int i = 0; i < file_path.length(); i++)
-				{
-					if(file_path.charAt(i) == '.')
+
+				// String s = System.getProperty("file.separator");
+				// char firstLetter = s.charAt(0);
+
+				for (int i = 0; i < file_path.length(); i++) {
+					if (file_path.charAt(i) == '.')
 						endFile = "";
-					else if(file_path.charAt(i) != '.')
+					else if (file_path.charAt(i) != '.')
 						endFile += file_path.charAt(i);
 				}
-				
-				if(!temporary)
-				{
+
+				if (!temporary) {
 					temporary = true;
 					arrayStrings = name + "+" + signature + "." + endFile;
 					arrayBooleans = "" + tmp;
 					arrayInts = "" + tmpInt;
-				}
-				else if(temporary)
-				{
-					arrayStrings += "," + name + "+" + signature + "." + endFile;
+				} else if (temporary) {
+					arrayStrings += "," + name + "+" + signature + "."
+							+ endFile;
 					arrayBooleans += "," + tmp;
 					arrayInts += "," + tmpInt;
 				}
 			}
-		} 
-		catch (Exception exc) 
-		{
+		} catch (Exception exc) {
 			exc.printStackTrace();
+		} finally {
+			close();
 		}
-		finally 
-	    {
-	    	close();
-	    }
-		
+
 		return arrayStrings;
 	}
-	
+
 	@GET
 	@Path("/getBooleans")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getBooleans()
-	{
+	public String getBooleans() {
 		return arrayBooleans;
 	}
-	
+
 	@GET
 	@Path("/getInts")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getInts()
-	{
+	public String getInts() {
 		return arrayInts;
 	}
-	
-	private void close() 
-    {
-		try 
-		{
-			if(resultSet != null) 
+
+	private void close() {
+		try {
+			if (resultSet != null)
 				resultSet.close();
 
-			if(statement != null) 
+			if (statement != null)
 				statement.close();
 
-			if(connect != null) 
+			if (connect != null)
 				connect.close();
-		} 
-		catch(Exception e) 
-		{
-    	  
+		} catch (Exception e) {
+
 		}
-    }
+	}
 }
