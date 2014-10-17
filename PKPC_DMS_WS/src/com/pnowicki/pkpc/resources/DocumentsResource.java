@@ -46,7 +46,7 @@ public class DocumentsResource {
 							+ LoginResource.passwordDataBase);
 
 			preparedStatement = connect
-					.prepareStatement("insert into  PKPCargoDMS.documents values (default, ?, ?, default, ?, ?, null)");
+					.prepareStatement("insert into  PKPCargoDMS.documents (document_id, name, signature, create_date, file_path, considered, date_of_considered) values (default, ?, ?, default, ?, ?, null)");
 			preparedStatement.setString(1, fileName);
 			preparedStatement.setString(2, fileSignature);
 			preparedStatement.setString(3, filePath);
