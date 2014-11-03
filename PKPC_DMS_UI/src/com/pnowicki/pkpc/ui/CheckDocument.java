@@ -48,7 +48,6 @@ public class CheckDocument extends JFrame {
 
 	private String addressToLogicLayer = new String();
 	private String[] departments;
-	// private String[] mails;
 
 	private String host;
 	private String port;
@@ -82,8 +81,6 @@ public class CheckDocument extends JFrame {
 		contentTextArea.setLineWrap(true);
 
 		departmentsList.setModel(new AbstractListModel() {
-			// String[] strings = { "Dzia³ marketingu", "Dzia³ logistyki",
-			// "Dzia³ informatyków"};
 			public int getSize() {
 				return departments.length;
 			}
@@ -220,6 +217,7 @@ public class CheckDocument extends JFrame {
 					JOptionPane.showMessageDialog(rootPane,
 							"Nie zaznaczono ¿adnego dzia³u");
 				} else {
+					//do tablicy zapisujemy indeksy wybranych departamentow
 					int[] intSelectedDepartments = departmentsList
 							.getSelectedIndices();
 					String[] stringSelectedDepartments = new String[intSelectedDepartments.length];
@@ -227,6 +225,7 @@ public class CheckDocument extends JFrame {
 
 					String mailsString = new String("");
 
+					//zapisanie adresow e-mail zaznaczonych departamentow
 					for (int q = 0; q < intSelectedDepartments.length; q++) {
 						for (int i = 0; i < departmentsEmails.length; i++) {
 							if (intSelectedDepartments[q] == i) {
@@ -236,13 +235,16 @@ public class CheckDocument extends JFrame {
 						}
 					}
 
+					//do stringa zapisuje adresy e-mail zaznaczonych departamentow, ktore zostaly oddziale przecinkami
 					for (int i = 0; i < stringSelectedDepartments.length; i++) {
 						mailsString += stringSelectedDepartments[i] + ",";
 					}
 
+					//sprawdzam czy checkbox jest odhaczony
 					boolean resultDocumentCheckBox = documentCheckBox
 							.isSelected();
 
+					//wybór klasy i metody w warstwie logiki oraz tworzenie zasobu, który bêdzie wys³any do metody
 					ClientConfig config = new DefaultClientConfig();
 					Client client = Client.create(config);
 					client = Client.create(config);
@@ -268,6 +270,7 @@ public class CheckDocument extends JFrame {
 					fdmp.bodyPart(new FormDataBodyPart("mailPassword",
 							mailPassword));
 
+					//wywo³anie metody z warstwy logiki
 					ClientResponse response = webResource.type(
 							MediaType.MULTIPART_FORM_DATA_TYPE).put(
 							ClientResponse.class, fdmp);

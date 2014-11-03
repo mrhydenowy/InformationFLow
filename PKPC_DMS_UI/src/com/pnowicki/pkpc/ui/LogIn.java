@@ -10,6 +10,8 @@ import java.io.FileReader;
 import javax.swing.*;
 import javax.ws.rs.core.MediaType;
 
+import org.codehaus.jettison.json.JSONException;
+
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
@@ -17,6 +19,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.multipart.FormDataBodyPart;
 import com.sun.jersey.multipart.FormDataMultiPart;
+
 
 public class LogIn extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -147,6 +150,7 @@ public class LogIn extends JFrame {
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//czytanie pliku zale¿nie od nazwy u¿ytkownika. Zmieniæ na jedne czytanie pliku.
 				if (userNameField.getText().equals("sekretarka"))
 					firstReadFile();
 				else if (userNameField.getText().equals("dyrektor"))
@@ -154,18 +158,21 @@ public class LogIn extends JFrame {
 
 				String getName = userNameField.getText();
 				String getPassword = String.valueOf(passwordField.getPassword());
-
+				
+				//wybór klasy i metody w warstwie logiki
 				ClientConfig config = new DefaultClientConfig();
 				Client client = Client.create(config);
 				client = Client.create(config);
 				client.addFilter(new LoggingFilter());
 				WebResource webResource = client.resource(addressToLogicLayer)
 						.path("login").path("login");
-
+				
+				//tworzenie zasobu, który bêdzie wys³any do metody
 				FormDataMultiPart fdmp = new FormDataMultiPart();
 				fdmp.bodyPart(new FormDataBodyPart("userName", getName));
 				fdmp.bodyPart(new FormDataBodyPart("userPassword", getPassword));
-
+				
+				//wywo³anie metody z warstwy logiki
 				String response = webResource.type(
 						MediaType.MULTIPART_FORM_DATA_TYPE).put(String.class,
 						fdmp);
@@ -174,19 +181,27 @@ public class LogIn extends JFrame {
 						.resource(addressToLogicLayer).path("login")
 						.path("getFinalPath");
 
+				//wywo³anie metody z warstwy logiki. Tutaj nie tworzymy zadnego zasobu, bo wywo³ujemy metodê get
 				String finalPath = webResourcePath.type(
 						MediaType.MULTIPART_FORM_DATA_TYPE).get(String.class);
-
+				
+				//wyœwietlenie nowego okna, zale¿nie od roli jaka ma uzytkownik
 				if (response.equals("user"))
 					new AddDocument(addressToLogicLayer).setVisible(true);
 				else if (response.equals("admin"))
-					new ViewDocuments(addressToLogicLayer, finalPath,
-							departments, mails, host, port, userMail,
-							mailPassword).setVisible(true);
+					try {
+						new ViewDocuments(addressToLogicLayer, finalPath,
+								departments, mails, host, port, userMail,
+								mailPassword).setVisible(true);
+					} catch (JSONException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
 			}
 		});
 	}
-
+	
+	//metoda zostanie wywo³ana jezeli uzytkownikiem jest sekretarka
 	private void firstReadFile() {
 		try {
 			FileReader fileReader = new FileReader("config.txt");
@@ -203,7 +218,8 @@ public class LogIn extends JFrame {
 			exc.printStackTrace();
 		}
 	}
-
+	
+	//metoda zostanie wywo³ana jezeli uzytkownikiem jest dyrektor
 	private void secondReadFile() {
 		try {
 			FileReader fileReader = new FileReader("config.txt");
@@ -215,6 +231,7 @@ public class LogIn extends JFrame {
 			String mailWhile = "";
 			String stringMail = "";
 
+			//petla wykonuje sie, dopoki nie znajdzie pustej linii
 			while ((content = bufferReader.readLine()) != null) {
 				if (content.equals("addressToLogicLayer:"))
 					addressToLogicLayer = bufferReader.readLine();
@@ -246,19 +263,23 @@ public class LogIn extends JFrame {
 		}
 	}
 
+	//metoda zamienia string z departamentami, na tablice
 	private void setDepartments(String stringDepartments) {
 		int counter = 0;
-
+		
+		//pêtla zlicza jest przecinków w stringu
 		for (int i = 0; i < stringDepartments.length(); i++) {
 			if (stringDepartments.charAt(i) == ',')
 				counter++;
 		}
-
+		
+		//inicjuje wielkosc tablicy, tak¹ jaka jest liczba przecinków w poprzednim stringu 
 		departments = new String[counter];
 		for (int i = 0; i < departments.length; i++) {
 			departments[i] = "";
 		}
-
+		
+		//metoda przypisuje, znak po znak do wybranego elementu tablicy. Jezeli napotka przecinek, przechodzi do kolejnego znaku
 		counter = 0;
 		for (int i = 0; i < stringDepartments.length(); i++) {
 			if (stringDepartments.charAt(i) != ',')
@@ -267,20 +288,24 @@ public class LogIn extends JFrame {
 				counter++;
 		}
 	}
-
+	
+	//ta metoda dzia³a tak samo jak metoda wy¿ej
 	private void setMails(String stringMail) {
 		int counter = 0;
 
+		//pêtla zlicza jest przecinków w stringu
 		for (int i = 0; i < stringMail.length(); i++) {
 			if (stringMail.charAt(i) == ',')
 				counter++;
 		}
 
+		//inicjuje wielkosc tablicy, tak¹ jaka jest liczba przecinków w poprzednim stringu 
 		mails = new String[counter];
 		for (int i = 0; i < mails.length; i++) {
 			mails[i] = "";
 		}
 
+		//metoda przypisuje, znak po znak do wybranego elementu tablicy. Jezeli napotka przecinek, przechodzi do kolejnego znaku
 		counter = 0;
 		for (int i = 0; i < stringMail.length(); i++) {
 			if (stringMail.charAt(i) != ',')

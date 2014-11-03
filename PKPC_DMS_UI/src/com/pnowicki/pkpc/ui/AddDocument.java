@@ -146,9 +146,7 @@ public class AddDocument extends JFrame {
 
 				String endFile = new String("");
 
-				// String s = System.getProperty("file.separator");
-				// char firstLetter = s.charAt(0);
-
+				//zapisuje w zmiennej endFile rozszerzenie pliku.
 				for (int i = 0; i < filePath.length(); i++) {
 					if (filePath.charAt(i) == '.')
 						endFile = "";
@@ -156,14 +154,15 @@ public class AddDocument extends JFrame {
 						endFile += filePath.charAt(i);
 				}
 
-				// System.out.println(endOfString);
-
+				//wybór klasy i metody w warstwie logiki
 				ClientConfig config = new DefaultClientConfig();
 				Client client = Client.create(config);
 				client = Client.create(config);
 				client.addFilter(new LoggingFilter());
 				WebResource webResource = client.resource(addressToLogicLayer)
 						.path("documents");
+				
+				//tworzenie zasobu, który bêdzie wys³any do metody
 				FormDataMultiPart fdmp = new FormDataMultiPart();
 				File fileTmp = new File(filePath);
 				System.out.println(file.getName());
@@ -175,13 +174,10 @@ public class AddDocument extends JFrame {
 						getSignatureField));
 				fdmp.bodyPart(new FormDataBodyPart("filePath", filePath));
 				fdmp.bodyPart(new FormDataBodyPart("endFile", endFile));
-
-				// ClientResponse response =
-				// webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(ClientResponse.class,
-				// fdmp);
+				
+				//wywo³anie metody z warstwy logiki
 				webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(
 						ClientResponse.class, fdmp);
-				// String string = response.getEntity(String.class);
 			}
 		});
 	}
@@ -189,8 +185,6 @@ public class AddDocument extends JFrame {
 	private void chooserFilesListener() {
 		chooserFiles.setCurrentDirectory(new File(System
 				.getProperty("user.dir")));
-
-		// chooserFiles.setMultiSelectionEnabled(true);
 
 		chooseFileButton.addActionListener(new ActionListener() {
 			@Override

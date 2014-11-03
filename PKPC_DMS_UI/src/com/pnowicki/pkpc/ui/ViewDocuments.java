@@ -14,6 +14,9 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.ws.rs.core.MediaType;
 
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -41,7 +44,7 @@ public class ViewDocuments extends JFrame {
 
 	public ViewDocuments(String addressToLogicLayer, String finalPath,
 			String[] departments, String[] mails, String host, String port,
-			String userMail, String mailPassword) {
+			String userMail, String mailPassword) throws JSONException {
 		super("Dokumenty");
 
 		this.setBounds(300, 300, 600, 400);
@@ -60,7 +63,7 @@ public class ViewDocuments extends JFrame {
 		initComponents();
 	}
 
-	private void initComponents() {
+	private void initComponents() throws JSONException {
 		GroupLayout layout = new GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
 		layout.setHorizontalGroup(layout.createParallelGroup(
@@ -87,106 +90,47 @@ public class ViewDocuments extends JFrame {
 		addDocumentButtonListener();
 	}
 
-	private void getNamesDocuments() {
+	private void getNamesDocuments() throws JSONException {
+		//wybór klasy i metody w warstwie logiki
 		ClientConfig config = new DefaultClientConfig();
 		Client client = Client.create(config);
 		client = Client.create(config);
 		client.addFilter(new LoggingFilter());
-
 		WebResource webResource = client.resource(addressToLogicLayer)
 				.path("viewdocuments").path("getFiles");
+		
+		//wywo³anie metody z warstwy logiki. Tutaj nie tworzymy zadnego zasobu, bo wywo³ujemy metodê get
+		JSONArray responseFileNames = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE)
+				.get(JSONArray.class);
 
-		String response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE)
-				.get(String.class);
-
-		// System.out.println(response);
-		int counter = 1;
-
-		for (int i = 0; i < response.length(); i++) {
-			if (response.charAt(i) == ',')
-				counter++;
-		}
-
-		String[] arrayStrings = new String[counter];
-
-		for (int i = 0; i < arrayStrings.length; i++)
-			arrayStrings[i] = "";
-
-		int tmpTest = 0;
-
-		for (int i = 0; i < response.length(); i++) {
-			if (response.charAt(i) != ',')
-				arrayStrings[tmpTest] += response.charAt(i);
-			else if (response.charAt(i) == ',')
-				tmpTest++;
-		}
-
+		//wybór klasy i metody w warstwie logiki oraz wywo³anie metody z warstwy logiki. Tutaj nie tworzymy zadnego zasobu, bo wywo³ujemy metodê get
 		webResource = client.resource(addressToLogicLayer)
 				.path("viewdocuments").path("getBooleans");
-		response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(
-				String.class);
+		JSONArray responseBooleans = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(
+				JSONArray.class);
 
-		counter = 1;
-
-		for (int i = 0; i < response.length(); i++) {
-			if (response.charAt(i) == ',')
-				counter++;
-		}
-
-		String[] arrayBooleans = new String[counter];
-
-		for (int i = 0; i < arrayBooleans.length; i++)
-			arrayBooleans[i] = "";
-
-		tmpTest = 0;
-
-		for (int i = 0; i < response.length(); i++) {
-			if (response.charAt(i) != ',')
-				arrayBooleans[tmpTest] += response.charAt(i);
-			else if (response.charAt(i) == ',')
-				tmpTest++;
-		}
-
+		//wybór klasy i metody w warstwie logiki oraz wywo³anie metody z warstwy logiki. Tutaj nie tworzymy zadnego zasobu, bo wywo³ujemy metodê get
 		webResource = client.resource(addressToLogicLayer)
 				.path("viewdocuments").path("getInts");
-		response = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(
-				String.class);
+		JSONArray responseDocumentId = webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).get(
+				JSONArray.class);
 
-		counter = 1;
+		//elementy z powy¿szej listy przyisujemy do listy globalnej
+		theLastInt = new int[responseDocumentId.length()];
 
-		for (int i = 0; i < response.length(); i++) {
-			if (response.charAt(i) == ',')
-				counter++;
+		for (int i = 0; i < responseDocumentId.length(); i++) {
+			theLastInt[i] = responseDocumentId.getInt(i);
 		}
 
-		String[] arrayInts = new String[counter];
-
-		for (int i = 0; i < arrayInts.length; i++)
-			arrayInts[i] = "";
-
-		tmpTest = 0;
-
-		for (int i = 0; i < response.length(); i++) {
-			if (response.charAt(i) != ',')
-				arrayInts[tmpTest] += response.charAt(i);
-			else if (response.charAt(i) == ',')
-				tmpTest++;
-		}
-
-		theLastInt = new int[arrayInts.length];
-
-		for (int i = 0; i < arrayInts.length; i++) {
-			theLastInt[i] = Integer.parseInt(arrayInts[i]);
-		}
-
-		for (int i = 0; i < arrayStrings.length; i++) {
-			jComboBox1.addItem(arrayStrings[i]);
+		for (int i = 0; i < responseFileNames.length(); i++) {
+			jComboBox1.addItem(responseFileNames.getString(i));
 		}
 
 		ComboBoxRenderer renderer = new ComboBoxRenderer(jComboBox1);
 
-		renderer.setStrings(arrayStrings);
-		renderer.setBoolean(arrayBooleans);
+		//wyswietlamy liste na podstawie nazw plikow i ich wartosci true i false
+		renderer.setStrings(responseFileNames);
+		renderer.setBoolean(responseBooleans);
 
 		jComboBox1.setRenderer(renderer);
 	}
@@ -202,37 +146,39 @@ public class ViewDocuments extends JFrame {
 
 					int selectedIndex = jComboBox1.getSelectedIndex();
 
-					String endOfString = new String("");
+					String fileName = new String("");
 
-					String s = System.getProperty("file.separator");
-					char firstLetter = s.charAt(0);
+					//file.separator to nic innego jak /. Uzywam file.separator a nie /, bo jezeli aplikacja zostanie uruchomiona w innym systemie operacyjnym, wtedy file.separator zmieni siê automatycznie
+					String separator = System.getProperty("file.separator");
+					char firstLetter = separator.charAt(0);
 
+					//zapisuje do zmiennej nazwe pliku
 					for (int i = 0; i < stringSelectedIndex.length(); i++) {
 						if (stringSelectedIndex.charAt(i) == firstLetter)
-							endOfString = "";
+							fileName = "";
 						else if (stringSelectedIndex.charAt(i) != firstLetter)
-							endOfString += stringSelectedIndex.charAt(i);
+							fileName += stringSelectedIndex.charAt(i);
 					}
 
+					//wybór klasy i metody w warstwie logiki
 					ClientConfig config = new DefaultClientConfig();
 					Client client = Client.create(config);
 					client = Client.create(config);
 					client.addFilter(new LoggingFilter());
 
+					//tworzenie zasobu, który bêdzie wys³any do metody
 					WebResource webResource = client
 							.resource(addressToLogicLayer)
 							.path("viewdocuments").path("openFile");
 					FormDataMultiPart fdmp = new FormDataMultiPart();
 					fdmp.bodyPart(new FormDataBodyPart("path", path
-							+ endOfString));
-
-					// ClientResponse response =
-					// webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(ClientResponse.class,
-					// fdmp);
+							+ fileName));
+					
+					//wywo³anie metody z warstwy logiki
 					webResource.type(MediaType.MULTIPART_FORM_DATA_TYPE).put(
 							ClientResponse.class, fdmp);
 
-					new CheckDocument(addressToLogicLayer, path + endOfString,
+					new CheckDocument(addressToLogicLayer, path + fileName,
 							theLastInt[selectedIndex], departments, mails,
 							host, port, userMail, mailPassword)
 							.setVisible(true);
@@ -246,8 +192,8 @@ public class ViewDocuments extends JFrame {
 
 class ComboBoxRenderer extends JPanel implements ListCellRenderer {
 	private static final long serialVersionUID = -1L;
-	private String[] strings;
-	private String[] bools;
+	private JSONArray strings;
+	private JSONArray bools;
 
 	JPanel textPanel;
 	JLabel text;
@@ -261,19 +207,19 @@ class ComboBoxRenderer extends JPanel implements ListCellRenderer {
 		textPanel.add(text);
 	}
 
-	public void setStrings(String[] str) {
+	public void setStrings(JSONArray str) {
 		strings = str;
 	}
 
-	public void setBoolean(String[] bool) {
+	public void setBoolean(JSONArray bool) {
 		bools = bool;
 	}
 
-	public String[] getStrings() {
+	public JSONArray getStrings() {
 		return strings;
 	}
 
-	public String[] getBooleans() {
+	public JSONArray getBooleans() {
 		return bools;
 	}
 
@@ -290,11 +236,21 @@ class ComboBoxRenderer extends JPanel implements ListCellRenderer {
 
 		text.setText(value.toString());
 		if (index > -1) {
-			if (bools[index].equals("false")) {
-				text.setForeground(Color.RED);
+			try {
+				if (bools.getString(index).equals("false")) {
+					text.setForeground(Color.RED);
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			if (bools[index].equals("true")) {
-				text.setForeground(Color.GREEN);
+			try {
+				if (bools.getString(index).equals("true")) {
+					text.setForeground(Color.GREEN);
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		return text;
