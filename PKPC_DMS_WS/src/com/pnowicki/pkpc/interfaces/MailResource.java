@@ -2,7 +2,7 @@ package com.pnowicki.pkpc.interfaces;
 
 import javax.ws.rs.core.Response;
 
-public interface SendMail {
+public interface MailResource {
 	public Response sendMail(
 			String mailSubject,
 			String mailContent,

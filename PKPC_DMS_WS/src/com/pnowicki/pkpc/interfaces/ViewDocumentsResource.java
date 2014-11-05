@@ -1,10 +1,9 @@
 package com.pnowicki.pkpc.interfaces;
 
-import javax.ws.rs.core.Response;
+import org.codehaus.jettison.json.JSONArray;
 
 public interface ViewDocumentsResource {
-	public Response openFile(String path) throws Exception;
-	public String getFiles();
-	public String getBooleans();
-	public String getInts();
+	public JSONArray getFiles();
+	public JSONArray getBooleans();
+	public JSONArray getInts();
 }
