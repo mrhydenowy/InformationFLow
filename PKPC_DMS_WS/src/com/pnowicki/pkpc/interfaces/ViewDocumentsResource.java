@@ -1,9 +1,7 @@
 package com.pnowicki.pkpc.interfaces;
 
-import org.codehaus.jettison.json.JSONArray;
+import com.pnowicki.pkpc.resources.FilesInfo;
 
 public interface ViewDocumentsResource {
-	public JSONArray getFilesName();
-	public JSONArray isConsidered();
-	public JSONArray getDocumentsId();
+	public FilesInfo getFilesInformation();
 }
